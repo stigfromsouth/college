@@ -35,8 +35,8 @@ class m191207_111757_create_college_tables extends Migration
         $this->addCommentOnTable('{{%roles}}', 'Справочник ролей');
 
         $this->createTable('{{%users_roles}}', [
-            'user_id' => $this->integer(11)->notNull()->comment('ID пользователя'),
-            'role_id' => $this->integer(11)->notNull()->comment('ID роли пользователя'),
+            'user_id' => $this->integer(11)->comment('ID пользователя'),
+            'role_id' => $this->integer(11)->comment('ID роли пользователя'),
             'updated_at' => $this->integer()->unsigned()->notnull()->comment('Дата обновления'),
             'comment' => $this->string(250)->null()->comment('Примечание')
         ]);
@@ -45,18 +45,6 @@ class m191207_111757_create_college_tables extends Migration
         $this->createIndex('UX_users_roles_id', '{{%users_roles}}', ['user_id', 'role_id'], true);
         $this->createIndex('IX_users_roles_id', '{{%users_roles}}', 'role_id');
         $this->addPrimaryKey('PK_users_roles', '{{%users_roles}}', ['user_id', 'role_id']);
-
-        $this->addForeignKey(
-            'FK_users_roles_user_id',
-            '{{%users_roles}}', 'user_id',
-            '{{%users}}', 'id'
-        );
-
-        $this->addForeignKey(
-            'FK_users_roles_role_id',
-            '{{%users_roles}}', 'role_id',
-            '{{%roles}}', 'id'
-        );
 
         $this->createTable('{{%groups}}', [
             'id' => $this->primaryKey(11)->unsigned(),
@@ -75,18 +63,6 @@ class m191207_111757_create_college_tables extends Migration
         $this->createIndex('UX_users_groups_id', '{{%user_groups}}', ['user_id', 'group_id'], true);
         $this->createIndex('IX_users_groups_group_id', '{{%user_groups}}', 'group_id');
         $this->addPrimaryKey('PK_users_groups', '{{%user_groups}}', ['user_id', 'group_id']);
-
-        $this->addForeignKey(
-            'FK_user_groups_user_id',
-            '{{%user_groups}}', 'user_id',
-            '{{%users}}', 'id'
-        );
-
-        $this->addForeignKey(
-            'FK_user_groups_group_id',
-            '{{%user_groups}}', 'group_id',
-            '{{%groups}}', 'id'
-        );
 
         $this->createTable('{{%discipline}}', [
             'id' => $this->primaryKey(11)->unsigned(),
@@ -107,23 +83,6 @@ class m191207_111757_create_college_tables extends Migration
 
         $this->createIndex('IX_exam_log_id', '{{%exam_log}}', ['student_id', 'teacher_id', 'discipline_id']);
 
-        $this->addForeignKey(
-            'FK_exam_log_student_id',
-            '{{%exam_log}}', 'student_id',
-            '{{%users}}', 'id'
-        );
-
-        $this->addForeignKey(
-            'FK_exam_log_teacher_id',
-            '{{%exam_log}}', 'teacher_id',
-            '{{%users}}', 'id'
-        );
-
-        $this->addForeignKey(
-            'FK_exam_log_discipline_id',
-            '{{%exam_log}}', 'discipline_id',
-            '{{%discipline}}', 'id'
-        );
     }
 
     /**
@@ -132,10 +91,19 @@ class m191207_111757_create_college_tables extends Migration
     public function safeDown()
     {
         echo "m191207_111757_create_college_tables cannot be reverted.\n";
+
         $this->dropIndex('UX_users', '{{%users}}');
+
         $this->dropIndex('UX_users_roles_id', '{{%users_roles}}');
+        $this->dropIndex('IX_users_roles_id', '{{%users_roles}}');
+
         $this->dropIndex('UX_users_groups_id', '{{%user_groups}}');
+        $this->dropIndex('IX_users_groups_group_id', '{{%user_groups}}');
+
         $this->dropIndex('IX_exam_log_id', '{{%exam_log}}');
+
+        $this->dropPrimaryKey('PK_users_roles', '{{%users_roles}}');
+        $this->dropPrimaryKey('PK_users_groups', '{{%user_groups}}');
 
         $this->dropTable('{{%users}}');
         $this->dropTable('{{%roles}}');
