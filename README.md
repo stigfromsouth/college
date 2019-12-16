@@ -4,9 +4,9 @@
 
 #### Развертывание и запуск docker-контейнеров из laradock
 ```
-docker-compose build nginx php-fpm workspace # притягивание и сборка контейнеров
-docker-compose up -d nginx php-fpm workspace # запуск созданных контейнеров
-docker-compose exec workspace bash           # запуск коммандной строки в контейнере
+docker-compose build nginx php-fpm mysql workspace  # притягивание и сборка контейнеров
+docker-compose up -d nginx php-fpm mysql workspace  # запуск созданных контейнеров
+docker-compose exec workspace bash                  # запуск коммандной строки в контейнере
 su laradock                              
 ```
 #### Create Yii2 project advanced
@@ -27,6 +27,15 @@ files:
             'charset' => 'utf8',
         ],
 ```
+#### Yii2 migration generate
+```
+yii migrate/create table_name              # create migration
+yii migrate/to m190523_222637_table_name   # apply migration by it's name
+yii migrate/down 1
+```
+
+#### Yii2 model generate
+`./yii gii/model --generateLabelsFromComments=1 --tableName=${table_name} --modelClass=${Classname} --ns='common\models'`
 
 #### Nginx config for Yii2 advanced
 ```
