@@ -35,8 +35,8 @@ class m191207_111757_create_college_tables extends Migration
         $this->addCommentOnTable('{{%roles}}', 'Справочник ролей');
 
         $this->createTable('{{%users_roles}}', [
-            'user_id' => $this->integer(11)->comment('ID пользователя'),
-            'role_id' => $this->integer(11)->comment('ID роли пользователя'),
+            'user_id' => $this->integer(11)->unsigned()->comment('ID пользователя'),
+            'role_id' => $this->integer(11)->unsigned()->comment('ID роли пользователя'),
             'updated_at' => $this->integer()->unsigned()->notnull()->comment('Дата обновления'),
             'comment' => $this->string(250)->null()->comment('Примечание')
         ]);
@@ -46,6 +46,18 @@ class m191207_111757_create_college_tables extends Migration
         $this->createIndex('IX_users_roles_id', '{{%users_roles}}', 'role_id');
         $this->addPrimaryKey('PK_users_roles', '{{%users_roles}}', ['user_id', 'role_id']);
 
+        $this->addForeignKey(
+            'FK_users_roles_user_id',
+            '{{%users_roles}}', 'user_id',
+            '{{%users}}', 'id'
+        );
+
+        $this->addForeignKey(
+            'FK_users_roles_role_id',
+            '{{%users_roles}}', 'role_id',
+            '{{%roles}}', 'id'
+        );
+
         $this->createTable('{{%groups}}', [
             'id' => $this->primaryKey(11)->unsigned(),
             'group_name' => $this->string(128)->unique()->notNull()->comment('Группы пользователей')
@@ -53,8 +65,8 @@ class m191207_111757_create_college_tables extends Migration
         $this->addCommentOnTable('{{%groups}}', 'Справочник групп пользователей');
 
         $this->createTable('{{%user_groups}}', [
-            'user_id' => $this->integer(11)->notNull()->comment('ID пользователя'),
-            'group_id' => $this->integer(11)->notNull()->comment('ID группы'),
+            'user_id' => $this->integer(11)->unsigned()->notNull()->comment('ID пользователя'),
+            'group_id' => $this->integer(11)->unsigned()->notNull()->comment('ID группы'),
             'updated_at' => $this->integer()->unsigned()->null()->comment('Дата обновления'),
             'comment' => $this->string(250)->null()->comment('Примечание')
         ]);
@@ -64,6 +76,18 @@ class m191207_111757_create_college_tables extends Migration
         $this->createIndex('IX_users_groups_group_id', '{{%user_groups}}', 'group_id');
         $this->addPrimaryKey('PK_users_groups', '{{%user_groups}}', ['user_id', 'group_id']);
 
+        $this->addForeignKey(
+            'FK_user_groups_user_id',
+            '{{%user_groups}}', 'user_id',
+            '{{%users}}', 'id'
+        );
+
+        $this->addForeignKey(
+            'FK_user_groups_group_id',
+            '{{%user_groups}}', 'group_id',
+            '{{%groups}}', 'id'
+        );
+
         $this->createTable('{{%discipline}}', [
             'id' => $this->primaryKey(11)->unsigned(),
             'discipline_name' => $this->string(128)->unique()->notNull()->comment('Наименование предмета')
@@ -72,9 +96,9 @@ class m191207_111757_create_college_tables extends Migration
 
         $this->createTable('{{%exam_log}}', [
             'id' => $this->primaryKey(11)->unsigned(),
-            'student_id' => $this->integer(11)->notNull()->comment('ID студента'),
-            'teacher_id' => $this->integer(11)->notNull()->comment('ID преподавателя'),
-            'discipline_id' => $this->integer(11)->notNull()->comment('ID предмета'),
+            'student_id' => $this->integer(11)->unsigned()->notNull()->comment('ID студента'),
+            'teacher_id' => $this->integer(11)->unsigned()->notNull()->comment('ID преподавателя'),
+            'discipline_id' => $this->integer(11)->unsigned()->notNull()->comment('ID предмета'),
             'exam_theme' => $this->string(250)->notnull()->comment('Тема оцениваемой работы'),
             'valuation' => $this->integer()->notNull()->comment('Оценка работы'),
             'signed_at' => $this->integer()->unsigned()->notNull()->comment('Дата получения оценки')
@@ -82,6 +106,24 @@ class m191207_111757_create_college_tables extends Migration
         $this->addCommentOnTable('{{%exam_log}}', 'Лог учебного процесса');
 
         $this->createIndex('IX_exam_log_id', '{{%exam_log}}', ['student_id', 'teacher_id', 'discipline_id']);
+
+        $this->addForeignKey(
+            'FK_exam_log_student_id',
+            '{{%exam_log}}', 'student_id',
+            '{{%users}}', 'id'
+        );
+
+        $this->addForeignKey(
+            'FK_exam_log_teacher_id',
+            '{{%exam_log}}', 'teacher_id',
+            '{{%users}}', 'id'
+        );
+
+        $this->addForeignKey(
+            'FK_exam_log_discipline_id',
+            '{{%exam_log}}', 'discipline_id',
+            '{{%discipline}}', 'id'
+        );
 
     }
 
@@ -91,6 +133,16 @@ class m191207_111757_create_college_tables extends Migration
     public function safeDown()
     {
         echo "m191207_111757_create_college_tables cannot be reverted.\n";
+
+        $this->dropForeignKey('FK_users_roles_user_id', '{{%users_roles}}');
+        $this->dropForeignKey('FK_users_roles_role_id', '{{%users_roles}}');
+
+        $this->dropForeignKey('FK_user_groups_user_id', '{{%user_groups}}');
+        $this->dropForeignKey('FK_user_groups_group_id', '{{%user_groups}}');
+
+        $this->dropForeignKey('FK_exam_log_student_id', '{{%exam_log}}');
+        $this->dropForeignKey('FK_exam_log_teacher_id', '{{%exam_log}}');
+        $this->dropForeignKey('FK_exam_log_discipline_id', '{{%exam_log}}');
 
         $this->dropIndex('UX_users', '{{%users}}');
 
