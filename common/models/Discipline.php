@@ -9,6 +9,11 @@ use Yii;
  *
  * @property int $id
  * @property string $discipline_name Наименование предмета
+ *
+ * @property Attestat[] $attestats
+ * @property ExamLog[] $examLogs
+ * @property TeacherDisciplines[] $teacherDisciplines
+ * @property Users[] $users
  */
 class Discipline extends \yii\db\ActiveRecord
 {
@@ -41,5 +46,37 @@ class Discipline extends \yii\db\ActiveRecord
             'id' => 'ID',
             'discipline_name' => 'Наименование предмета',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAttestats()
+    {
+        return $this->hasMany(Attestat::className(), ['discipline_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExamLogs()
+    {
+        return $this->hasMany(ExamLog::className(), ['discipline_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTeacherDisciplines()
+    {
+        return $this->hasMany(TeacherDisciplines::className(), ['discipline_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(Users::className(), ['id' => 'user_id'])->viaTable('teacher_disciplines', ['discipline_id' => 'id']);
     }
 }

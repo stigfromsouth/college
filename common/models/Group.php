@@ -9,6 +9,12 @@ use Yii;
  *
  * @property int $id
  * @property string $group_name Группы пользователей
+ *
+ * @property Attestat[] $attestats
+ * @property TeacherGroups[] $teacherGroups
+ * @property Users[] $users
+ * @property UserGroups[] $userGroups
+ * @property Users[] $users0
  */
 class Group extends \yii\db\ActiveRecord
 {
@@ -41,5 +47,45 @@ class Group extends \yii\db\ActiveRecord
             'id' => 'ID',
             'group_name' => 'Группы пользователей',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAttestats()
+    {
+        return $this->hasMany(Attestat::className(), ['group_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTeacherGroups()
+    {
+        return $this->hasMany(TeacherGroups::className(), ['group_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(Users::className(), ['id' => 'user_id'])->viaTable('teacher_groups', ['group_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserGroups()
+    {
+        return $this->hasMany(UserGroups::className(), ['group_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsers0()
+    {
+        return $this->hasMany(Users::className(), ['id' => 'user_id'])->viaTable('user_groups', ['group_id' => 'id']);
     }
 }

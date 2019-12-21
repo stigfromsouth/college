@@ -5,24 +5,22 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "user_groups".
+ * This is the model class for table "teacher_groups".
  *
- * @property int $user_id ID пользователя
- * @property int $group_id ID группы
- * @property int|null $updated_at Дата обновления
- * @property string|null $comment Примечание
+ * @property int $user_id ID пользователя-преподавателя
+ * @property int $group_id ID группы студентов
  *
  * @property Groups $group
  * @property Users $user
  */
-class UserGroup extends \yii\db\ActiveRecord
+class TeacherGroup extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'user_groups';
+        return 'teacher_groups';
     }
 
     /**
@@ -32,8 +30,7 @@ class UserGroup extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'group_id'], 'required'],
-            [['user_id', 'group_id', 'updated_at'], 'integer'],
-            [['comment'], 'string', 'max' => 250],
+            [['user_id', 'group_id'], 'integer'],
             [['user_id', 'group_id'], 'unique', 'targetAttribute' => ['user_id', 'group_id']],
             [['group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Groups::className(), 'targetAttribute' => ['group_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -46,10 +43,8 @@ class UserGroup extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'user_id' => 'ID пользователя',
-            'group_id' => 'ID группы',
-            'updated_at' => 'Дата обновления',
-            'comment' => 'Примечание',
+            'user_id' => 'ID пользователя-преподавателя',
+            'group_id' => 'ID группы студентов',
         ];
     }
 
